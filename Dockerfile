@@ -5,13 +5,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
 # Copy the project files
-COPY . ./
-
-# Restore dependencies
+COPY *.csproj ./
 RUN dotnet restore
 
-# Build the application
-RUN dotnet publish -c Release -o out
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o /out
 
 # Use the official .NET runtime image for production
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
