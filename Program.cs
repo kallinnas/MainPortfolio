@@ -13,7 +13,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Serve wwwroot files (Angular dist)
+app.UseRouting();
+
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html for client-side routes
 
 app.Run();
