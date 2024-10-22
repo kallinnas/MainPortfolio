@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // CORS
 builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
-{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+{ builder.WithOrigins("https://mainportfolio-production-8e90.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+//{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -53,7 +54,7 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapFallbackToFile("/{*url}", "index.html");
-//app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html for client-side routes
+//app.MapFallbackToFile("/{*url}", "index.html");
+app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html for client-side routes
 
 app.Run();
