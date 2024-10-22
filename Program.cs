@@ -53,6 +53,7 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html for client-side routes
+app.MapFallbackToFile("/{*url}", "index.html");
+//app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html for client-side routes
 
 app.Run();
