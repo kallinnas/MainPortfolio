@@ -3,7 +3,7 @@
 namespace MainPortfolio.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TestController : ControllerBase
 {
     [HttpGet]
