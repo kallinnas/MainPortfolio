@@ -38,11 +38,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Apply pending migrations
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.Migrate(); // Apply any pending migrations
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    dbContext.Database.Migrate(); // Apply any pending migrations
+//}
 
 app.UseCors("AllowAllHeaders");
 
