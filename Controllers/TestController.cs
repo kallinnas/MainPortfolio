@@ -1,14 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MainPortfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TestController : ControllerBase
 {
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(new { message = "Hello from .NET 8 Web API" });
+        try
+        {
+            return Ok(new { message = "Hello from .NET 8 Web API" });
+        }
+
+        catch(Exception ex)
+        {
+            return (IActionResult)ex;
+        }
     }
 }

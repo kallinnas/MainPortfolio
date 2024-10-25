@@ -8,7 +8,7 @@ public static class JwtServiceExtensions
 {
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
+        var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!);
 
         services.AddAuthentication(options =>
         {
@@ -32,7 +32,7 @@ public static class JwtServiceExtensions
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!)),
                 ValidateIssuer = true,
                 ValidIssuer = configuration["Jwt:Issuer"],
                 ValidateAudience = true,

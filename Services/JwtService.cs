@@ -4,17 +4,17 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace ProductStoreSystemAPI.Services;
+namespace MainPortfolio.Services;
 
 public class JwtService
 {
     private readonly IConfiguration _configuration;
     public JwtService(IConfiguration configuration) { _configuration = configuration; }
 
-    public string GenerateJwtToken(User user)
+    public string GenerateAccessToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -25,7 +25,8 @@ public class JwtService
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             }),
 
-            Expires = DateTime.UtcNow.AddHours(1),
+            //Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddSeconds(5),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -35,10 +36,10 @@ public class JwtService
         return tokenHandler.WriteToken(token);
     }
 
-    public bool ValidateToken(string token)
+    public bool ValidateAccessToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         try
         {
@@ -59,10 +60,8 @@ public class JwtService
 
             var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userIdClaim != null)
-            {
-                return true;
-            }
+            if (userIdClaim != null) { return true; }
+
             return false;
         }
 
@@ -71,4 +70,5 @@ public class JwtService
             return false;
         }
     }
+
 }

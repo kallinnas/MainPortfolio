@@ -3,16 +3,13 @@ using MainPortfolio.Data;
 using MainPortfolio.Models;
 using MainPortfolio.Repositories.Interfaces;
 
-namespace ProductStoreSystemAPI.Repositories;
+namespace MainPortfolio.Repositories;
 
 public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _context;
 
-    public UserRepository(AppDbContext context)
-    {
-        _context = context;
-    }
+    public UserRepository(AppDbContext context) { _context = context; }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
