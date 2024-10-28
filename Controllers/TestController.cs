@@ -16,9 +16,9 @@ public class TestController : ControllerBase
             return Ok(new { message = "Hello from .NET 8 Web API" });
         }
 
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return (IActionResult)ex;
+            return Unauthorized(new { error = "RefreshTokenExpired", message = "Refresh token has expired." });
         }
     }
 }

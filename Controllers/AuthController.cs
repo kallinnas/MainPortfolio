@@ -36,12 +36,12 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegistrDto userDto)
     {
-        var token = await _authService.RegisterAsync(userDto);
+        var tokens = await _authService.RegisterAsync(userDto);
 
-        if (token != null)
+        if (tokens != null)
         {
-            SetRefreshTokenCookie(token);
-            return Ok(new { token });
+            SetRefreshTokenCookie(tokens.Value.refreshToken);
+            return Ok(new { tokens.Value.accessToken });
         }
 
         return BadRequest("Email is already taken.");
@@ -53,14 +53,20 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Logout successful" });
     }
 
-    [HttpPost("refresh-token")]
+    [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
 
-        if (string.IsNullOrEmpty(refreshToken)) { return Unauthorized("No refresh token provided."); }
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized(new { error = "RefreshTokenExpired", message = "Refresh token has expired." });
+        }
 
-        if (!await _authService.ValidateRefreshTokenAsync(refreshToken)) { return Unauthorized("Invalid refresh token."); }
+        if (!await _authService.ValidateRefreshTokenAsync(refreshToken))
+        {
+            return Unauthorized(new { error = "InvalidRefreshToken", message = "Invalid refresh token." });
+        }
 
         return Ok(new { accessToken = _authService.GenerateNewAccessTokenAsync(refreshToken) });
     }
@@ -72,7 +78,7 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddMinutes(2)
+            Expires = DateTime.UtcNow.AddSeconds(10)
             //Expires = DateTime.UtcNow.AddDays(7)
         };
 

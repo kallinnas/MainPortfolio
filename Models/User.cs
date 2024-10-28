@@ -8,6 +8,13 @@ public class User
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
+    public User(sbyte role, string name, string email, string passwordHash)
+    {
+        Role = role;
+        Name = name;
+        Email = email;
+        PasswordHash = passwordHash;
+    }
 }
 
 public class UserAuthDto

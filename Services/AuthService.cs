@@ -23,33 +23,29 @@ public class AuthService : IAuthService
 
         if (user != null && BCrypt.Net.BCrypt.Verify(userDto.Password, user.PasswordHash))
         {
-            var accessToken = _jwtService.GenerateAccessToken(user);
-            var refreshToken = _refreshTokenService.Generate(user);
-            return (accessToken, refreshToken);
+            return GenerateAuthTokens(user);
         }
 
         return null;
     }
 
-    public async Task<string?> RegisterAsync(UserRegistrDto userDto)
+    public async Task<(string accessToken, string refreshToken)?> RegisterAsync(UserRegistrDto userDto)
     {
-        if (await _userRepository.IsEmailTakenAsync(userDto.Email))
-        {
-            return null;
-        }
+        if (await _userRepository.IsEmailTakenAsync(userDto.Email)) { return null; }
 
-        var newUser = new User
-        {
-            Email = userDto.Email,
-            Name = userDto.Name,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
-            Role = await _userRepository.IsAdmin()
-        };
+        var newUser = new User(await _userRepository.IsAdmin(), userDto.Name, userDto.Email, BCrypt.Net.BCrypt.HashPassword(userDto.Password));
 
         await _userRepository.AddUserAsync(newUser);
         await _userRepository.SaveChangesAsync();
 
-        return _jwtService.GenerateAccessToken(newUser);
+        return GenerateAuthTokens(newUser);
+    }
+
+    private (string accessToken, string refreshToken)? GenerateAuthTokens(User user)
+    {
+        var accessToken = _jwtService.GenerateAccessToken(user);
+        var refreshToken = _refreshTokenService.Generate(user);
+        return (accessToken, refreshToken);
     }
 
     public Task<bool> ValidateAccessTokenAsync(string token)
