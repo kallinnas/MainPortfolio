@@ -18,7 +18,7 @@ public class TestController : ControllerBase
 
         catch (Exception ex)
         {
-            return Unauthorized(new { error = "RefreshTokenExpired", message = "Refresh token has expired." });
+            return Unauthorized(new { error = "RefreshTokenExpired, " + ex.Message, message = "Refresh token has expired." });
         }
     }
 }

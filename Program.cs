@@ -6,23 +6,22 @@ using MainPortfolio.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS
-builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
-{ builder.WithOrigins("https://mainportfolio-production-8e90.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
-//{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+// RAILWAY VARIABLES
+builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// CORS
+builder.Services.AddAppCors(builder.Configuration);
+
+// JWT configuration
+builder.Services.AddJwtAuthWithSwagger(builder.Configuration);
 
 // MySQL Db
 builder.Services.AddMySqlDatabase(builder.Configuration);
-builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<RefreshTokenService>();
-// JWT configuration
-builder.Services.AddJwtAuthentication(builder.Configuration);
-// Swagger with JWT
-builder.Services.AddSwaggerWithJwtAuth();
+builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
 
 // App services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -36,7 +35,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAllHeaders");
+app.MigrateDatabase(); // Apply pending migrations (for railway migration db)
+
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Serve wwwroot files (Angular dist)
@@ -56,9 +57,3 @@ app.Run();
 
 
 
-// Apply pending migrations (for railway migration db)
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    dbContext.Database.Migrate(); // Apply any pending migrations
-//}

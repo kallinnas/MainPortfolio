@@ -15,7 +15,7 @@ public class AuthController : ControllerBase
     [HttpPost("validateToken")]
     public async Task<IActionResult> ValidateToken([FromBody] TokenRequest request)
     {
-        bool isValid = await _authService.ValidateAccessTokenAsync(request.Token);
+        bool isValid = await _authService.ValidateAccessTokenAsync(request.Token!);
         return Ok(isValid);
     }
 
@@ -53,8 +53,8 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Logout successful" });
     }
 
-    [HttpPost("refreshToken")]
-    public async Task<IActionResult> RefreshToken()
+    [HttpPost("updateAccessToken")]
+    public async Task<IActionResult> UpdateAccessToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
 
