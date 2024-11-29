@@ -1,19 +1,19 @@
-﻿using MainPortfolio.Models;
+﻿using MainPortfolio.Security.Services.Interfaces;
 using MainPortfolio.Repositories.Interfaces;
-using MainPortfolio.Services.Interfaces;
+using MainPortfolio.Models;
 
-namespace MainPortfolio.Services;
+namespace MainPortfolio.Security.Services;
 
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
-    private readonly JwtService _jwtService;
-    private readonly RefreshTokenService _refreshTokenService;
+    private readonly IAccessTokenService _accessTokenService;
+    private readonly IRefreshTokenService _refreshTokenService;
 
-    public AuthService(IUserRepository userRepository, JwtService jwtService, RefreshTokenService refreshTokenService)
+    public AuthService(IUserRepository userRepository, IAccessTokenService jwtService, IRefreshTokenService refreshTokenService)
     {
         _userRepository = userRepository;
-        _jwtService = jwtService;
+        _accessTokenService = jwtService;
         _refreshTokenService = refreshTokenService;
     }
 
@@ -41,34 +41,12 @@ public class AuthService : IAuthService
         return GenerateAuthTokens(newUser);
     }
 
-    private (string accessToken, string refreshToken)? GenerateAuthTokens(User user)
+    public (string accessToken, string refreshToken)? GenerateAuthTokens(User user)
     {
-        var accessToken = _jwtService.GenerateAccessToken(user);
+        var accessToken = _accessTokenService.GenerateAccessToken(user);
         var refreshToken = _refreshTokenService.Generate(user);
         return (accessToken, refreshToken);
     }
 
-    public Task<bool> ValidateAccessTokenAsync(string token)
-    {
-        return Task.FromResult(_jwtService.ValidateAccessToken(token));
-    }
-
-    public Task<bool> ValidateRefreshTokenAsync(string token)
-    {
-        return Task.FromResult(_refreshTokenService.Validate(token));
-    }
-
-    public async Task<string?> GenerateNewAccessTokenAsync(string refreshToken)
-    {
-        var email = _refreshTokenService.GetUserEmailFromRefreshToken(refreshToken);
-        var user = await _userRepository.GetUserByEmailAsync(email!);
-
-        if (user != null)
-        {
-            return await Task.FromResult(_jwtService.GenerateAccessToken(user));
-        }
-
-        return null;
-    }
 
 }

@@ -1,10 +1,12 @@
-﻿using MainPortfolio.Models;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace MainPortfolio.Services;
+using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Models;
 
-public class RefreshTokenService
+namespace MainPortfolio.Security.Services;
+
+public class RefreshTokenService : IRefreshTokenService
 {
     private readonly IConfiguration _configuration;
     private readonly byte[] _refreshKey;
@@ -27,11 +29,11 @@ public class RefreshTokenService
         var tokenData = $"{Convert.ToBase64String(randomNumber)}|{user.Email}|{DateTime.UtcNow.Ticks}";
         var tokenBytes = Encoding.UTF8.GetBytes(tokenData);
 
-        // Sign the refresh token data using a secret key (HMAC)
+        // Sign refresh token data using a secret key (HMAC)
         using (var hmac = new HMACSHA256(_refreshKey))
         {
             var signature = hmac.ComputeHash(tokenBytes);
-            return $"{tokenData}|{Convert.ToBase64String(signature)}";  // Return token + signature
+            return $"{tokenData}|{Convert.ToBase64String(signature)}";
         }
     }
 
@@ -40,8 +42,8 @@ public class RefreshTokenService
         var parts = refreshToken.Split('|');
         if (parts.Length != 4) return false;
 
-        var tokenData = string.Join('|', parts.Take(3));  // The original data part
-        var providedSignature = parts[3];  // The signature
+        var tokenData = string.Join('|', parts.Take(3));
+        var providedSignature = parts[3];
 
         var tokenBytes = Encoding.UTF8.GetBytes(tokenData);
 
@@ -54,12 +56,24 @@ public class RefreshTokenService
     }
 
     public string? GetUserEmailFromRefreshToken(string refreshToken)
-    {
-        // Split the token into its parts (random part, email, timestamp, signature)
+    {   // Split the token into its parts (random part, email, timestamp, signature)
         var parts = refreshToken.Split('|');
         if (parts.Length != 4) return null;
+        return parts[1];  // Extract the email part
+    }
 
-        return parts[1];  // Extract the email part of the token
+    public void SetRefreshTokenCookie(string refreshToken, IResponseCookies cookies)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddSeconds(10)
+            //Expires = DateTime.UtcNow.AddDays(7)
+        };
+
+        cookies.Append("refreshToken", refreshToken, cookieOptions);
     }
 
 }

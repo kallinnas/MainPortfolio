@@ -1,15 +1,24 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using MainPortfolio.Models;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 
-namespace MainPortfolio.Services;
+using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Repositories.Interfaces;
+using MainPortfolio.Models;
 
-public class JwtService
+namespace MainPortfolio.Security.Services;
+
+public class AccessTokenService : IAccessTokenService
 {
     private readonly IConfiguration _configuration;
-    public JwtService(IConfiguration configuration) { _configuration = configuration; }
+    private readonly IUserRepository _userRepository;
+    private readonly IRefreshTokenService _refreshTokenService;
+
+    public AccessTokenService(IConfiguration configuration, IRefreshTokenService refreshTokenService, IUserRepository userRepository)
+    {
+        _configuration = configuration; _refreshTokenService = refreshTokenService; _userRepository = userRepository;
+    }
 
     public string GenerateAccessToken(User user)
     {
@@ -34,6 +43,19 @@ public class JwtService
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<string?> GenerateNewAccessTokenAsync(string refreshToken)
+    { // after expairation AccessToken updated by RefreshToken
+        var email = _refreshTokenService.GetUserEmailFromRefreshToken(refreshToken);
+        var user = await _userRepository.GetUserByEmailAsync(email!);
+
+        if (user != null)
+        {
+            return await Task.FromResult(GenerateAccessToken(user));
+        }
+
+        return null;
     }
 
     public bool ValidateAccessToken(string token)

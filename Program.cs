@@ -1,8 +1,8 @@
 using MainPortfolio.Extensions;
 using MainPortfolio.Repositories.Interfaces;
-using MainPortfolio.Services.Interfaces;
-using MainPortfolio.Services;
 using MainPortfolio.Repositories;
+using MainPortfolio.Security.Services;
+using MainPortfolio.Security.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +17,8 @@ builder.Services.AddJwtAuthWithSwagger(builder.Configuration);
 
 // MySQL Db
 builder.Services.AddMySqlDatabase(builder.Configuration);
-builder.Services.AddScoped<RefreshTokenService>();
-builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
