@@ -13,7 +13,7 @@ public class RefreshTokenController : ControllerBase
 
     public RefreshTokenController(IRefreshTokenService refreshTokenService) { _refreshTokenService = refreshTokenService; }
 
-    [HttpGet("validate")]
+    [HttpGet("validateRefreshToken")]
     public IActionResult ValidateRefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];

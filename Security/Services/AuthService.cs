@@ -10,11 +10,9 @@ public class AuthService : IAuthService
     private readonly IAccessTokenService _accessTokenService;
     private readonly IRefreshTokenService _refreshTokenService;
 
-    public AuthService(IUserRepository userRepository, IAccessTokenService jwtService, IRefreshTokenService refreshTokenService)
+    public AuthService(IUserRepository userRepository, IAccessTokenService accessTokenService, IRefreshTokenService refreshTokenService)
     {
-        _userRepository = userRepository;
-        _accessTokenService = jwtService;
-        _refreshTokenService = refreshTokenService;
+        _userRepository = userRepository; _accessTokenService = accessTokenService; _refreshTokenService = refreshTokenService;
     }
 
     public async Task<(string accessToken, string refreshToken)?> LoginAsync(UserAuthDto userDto)

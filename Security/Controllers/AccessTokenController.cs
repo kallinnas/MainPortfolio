@@ -17,7 +17,7 @@ public class AccessTokenController : ControllerBase
         _accessTokenService = accessTokenService; _refreshTokenService = refreshTokenService;
     }
 
-    [HttpPost("validate")]
+    [HttpPost("validateAccessToken")]
     public IActionResult ValidateToken([FromBody] TokenRequest request)
     {
         bool isValid = _accessTokenService.ValidateAccessToken(request.Token!);

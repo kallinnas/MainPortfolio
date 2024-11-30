@@ -69,6 +69,7 @@ public class RefreshTokenService : IRefreshTokenService
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
+            //Expires = DateTime.UtcNow.AddMinutes(1)
             Expires = DateTime.UtcNow.AddSeconds(10)
             //Expires = DateTime.UtcNow.AddDays(7)
         };

@@ -12,8 +12,10 @@ builder.Configuration.AddEnvironmentVariables();
 // CORS
 builder.Services.AddAppCors(builder.Configuration);
 
-// JWT configuration
-builder.Services.AddJwtAuthWithSwagger(builder.Configuration);
+//// JWT configuration
+builder.Services.AddJwtAuthentication(builder.Configuration);
+// Swagger with JWT
+builder.Services.AddSwaggerWithJwtAuth();
 
 // MySQL Db
 builder.Services.AddMySqlDatabase(builder.Configuration);
