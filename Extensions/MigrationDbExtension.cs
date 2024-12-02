@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MainPortfolio.Extensions;
 
-public static class MigrateDbExtensions
+public static class MigrationDbExtension
 {
     public static IApplicationBuilder MigrateDatabase(this IApplicationBuilder app)
     {

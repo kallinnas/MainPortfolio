@@ -4,9 +4,8 @@ using System.Text;
 
 namespace MainPortfolio.Extensions;
 
-public static class JwtServiceExtensions
+public static class AccessTokenExtension
 {
-
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!);

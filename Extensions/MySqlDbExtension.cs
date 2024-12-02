@@ -3,7 +3,7 @@ using MainPortfolio.Data;
 
 namespace MainPortfolio.Extensions;
 
-public static class MySqlDbExtensions
+public static class MySqlDbExtension
 {
     public static IServiceCollection AddMySqlDatabase(this IServiceCollection services, IConfiguration configuration)
     {

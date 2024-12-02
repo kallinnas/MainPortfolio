@@ -2,7 +2,7 @@
 
 namespace MainPortfolio.Extensions;
 
-public static class SwaggerServiceExtensions
+public static class SwaggerExtension
 {
     public static IServiceCollection AddSwaggerWithJwtAuth(this IServiceCollection services)
     {

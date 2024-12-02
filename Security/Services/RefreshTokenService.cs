@@ -37,7 +37,7 @@ public class RefreshTokenService : IRefreshTokenService
         }
     }
 
-    public bool Validate(string refreshToken)
+    public bool ValidateRefreshToken(string refreshToken)
     {
         var parts = refreshToken.Split('|');
         if (parts.Length != 4) return false;
@@ -70,7 +70,7 @@ public class RefreshTokenService : IRefreshTokenService
             Secure = true,
             SameSite = SameSiteMode.Strict,
             //Expires = DateTime.UtcNow.AddMinutes(1)
-            Expires = DateTime.UtcNow.AddSeconds(10)
+            Expires = DateTime.UtcNow.AddSeconds(20)
             //Expires = DateTime.UtcNow.AddDays(7)
         };
 

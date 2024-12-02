@@ -1,6 +1,6 @@
 ﻿namespace MainPortfolio.Extensions;
 
-public static class CorsExtensions
+public static class CorsExtension
 {
     public static IServiceCollection AddAppCors(this IServiceCollection services, IConfiguration configuration)
     {
