@@ -1,4 +1,8 @@
-﻿namespace MainPortfolio.Extensions;
+﻿using Microsoft.Extensions.Options;
+
+using MainPortfolio.Middleware;
+
+namespace MainPortfolio.Extensions;
 
 public static class CorsExtension
 {
@@ -9,6 +13,7 @@ public static class CorsExtension
         services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
         {
             builder.WithOrigins(allowedOrigins)
+                   .WithExposedHeaders(configuration["Keys:AccessToken"]!)
                    .AllowCredentials()
                    .AllowAnyHeader()
                    .AllowAnyMethod();

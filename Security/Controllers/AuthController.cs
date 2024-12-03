@@ -13,40 +13,43 @@ public class AuthController : ControllerBase
     private readonly IRefreshTokenService _refreshTokenService;
 
     public AuthController(IAuthService authService, IRefreshTokenService refreshTokenService)
-    {
-        _authService = authService; _refreshTokenService = refreshTokenService;
-    }
+    { _authService = authService; _refreshTokenService = refreshTokenService; }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserAuthDto userDto)
     {
-        var tokens = await _authService.LoginAsync(userDto);
+        var token = await _authService.LoginAsync(userDto);
 
-        if (tokens != null)
+        if (!string.IsNullOrEmpty(token))
         {
-            _refreshTokenService.SetRefreshTokenCookie(tokens.Value.refreshToken, Response.Cookies);
-            return Ok(new { tokens.Value.accessToken });
+            _refreshTokenService.SetRefreshTokenCookie(token, Response.Cookies);
+            return Ok(new { TokenStatus.Valid });
         }
 
-        return Unauthorized();
+        return Unauthorized(new { TokenStatus.NotFound });
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegistrDto userDto)
     {
-        var tokens = await _authService.RegisterAsync(userDto);
+        var token = await _authService.RegisterAsync(userDto);
 
-        if (tokens != null)
+        if (!string.IsNullOrEmpty(token))
         {
-            _refreshTokenService.SetRefreshTokenCookie(tokens.Value.refreshToken, Response.Cookies);
-            return Ok(new { tokens.Value.accessToken });
+            _refreshTokenService.SetRefreshTokenCookie(token, Response.Cookies);
+            return Ok(new { TokenStatus.Valid });
         }
 
-        return BadRequest("Email is already taken.");
+        return BadRequest(new { TokenStatus.NotFound });
     }
 
     [HttpPost("logout")]
-    public IActionResult Logout() { return Ok(new { message = "Logout successful" }); }
+    public IActionResult Logout()
+    {
+        _refreshTokenService.RemoveRefreshTokenCookie(Response.Cookies);
+        return Ok(new { TokenStatus.Invalid });
+    }
+
 
 }
 

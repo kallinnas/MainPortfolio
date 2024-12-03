@@ -3,6 +3,7 @@ using MainPortfolio.Repositories.Interfaces;
 using MainPortfolio.Repositories;
 using MainPortfolio.Security.Services;
 using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Configuration.AddEnvironmentVariables();
 // CORS
 builder.Services.AddAppCors(builder.Configuration);
 
-//// JWT configuration
+// JWT configuration
 builder.Services.AddJwtAuthentication(builder.Configuration);
 // Swagger with JWT
 builder.Services.AddSwaggerWithJwtAuth();
@@ -31,6 +32,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionMiddleware>(); // Goes first to handle ex in subsequent middleware
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -45,8 +48,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles(); // Serve wwwroot files (Angular dist)
 app.UseRouting();
 
+app.UseMiddleware<RefreshTokenMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html for client-side routes

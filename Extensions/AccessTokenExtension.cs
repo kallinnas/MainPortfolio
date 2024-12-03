@@ -20,7 +20,7 @@ public static class AccessTokenExtension
             {
                 OnMessageReceived = context =>
                 {
-                    var accessToken = context.Request.Query["access_token"];
+                    var accessToken = context.Request.Query[configuration["Keys:AccessToken"]!];
 
                     if (!string.IsNullOrEmpty(accessToken))
                     {

@@ -16,9 +16,7 @@ public class AccessTokenService : IAccessTokenService
     private readonly IRefreshTokenService _refreshTokenService;
 
     public AccessTokenService(IConfiguration configuration, IRefreshTokenService refreshTokenService, IUserRepository userRepository)
-    {
-        _configuration = configuration; _refreshTokenService = refreshTokenService; _userRepository = userRepository;
-    }
+    { _configuration = configuration; _refreshTokenService = refreshTokenService; _userRepository = userRepository; }
 
     public string GenerateAccessToken(User user)
     {
@@ -92,5 +90,6 @@ public class AccessTokenService : IAccessTokenService
             return false;
         }
     }
+
 
 }

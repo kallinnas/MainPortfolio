@@ -12,12 +12,9 @@ public class RefreshTokenService : IRefreshTokenService
     private readonly byte[] _refreshKey;
 
     public RefreshTokenService(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _refreshKey = Encoding.ASCII.GetBytes(_configuration["Jwt:RefreshKey"]!);
-    }
+    { _configuration = configuration; _refreshKey = Encoding.ASCII.GetBytes(_configuration["Jwt:RefreshKey"]!); }
 
-    public string Generate(User user)
+    public string GenerateRefreshToken(User user)
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
@@ -71,10 +68,13 @@ public class RefreshTokenService : IRefreshTokenService
             SameSite = SameSiteMode.Strict,
             //Expires = DateTime.UtcNow.AddMinutes(1)
             Expires = DateTime.UtcNow.AddSeconds(20)
-            //Expires = DateTime.UtcNow.AddDays(7)
         };
 
-        cookies.Append("refreshToken", refreshToken, cookieOptions);
+        cookies.Append(_configuration["Keys:RefreshToken"]!, refreshToken, cookieOptions);
     }
 
+    public void RemoveRefreshTokenCookie(IResponseCookies cookies)
+    {
+        cookies.Delete(_configuration["Keys:RefreshToken"]!, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict });
+    }
 }
