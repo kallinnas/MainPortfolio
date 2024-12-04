@@ -67,7 +67,7 @@ public class RefreshTokenService : IRefreshTokenService
             Secure = true,
             SameSite = SameSiteMode.Strict,
             //Expires = DateTime.UtcNow.AddMinutes(1)
-            Expires = DateTime.UtcNow.AddSeconds(20)
+            Expires = DateTime.UtcNow.AddSeconds(10)
         };
 
         cookies.Append(_configuration["Keys:RefreshToken"]!, refreshToken, cookieOptions);
@@ -75,6 +75,12 @@ public class RefreshTokenService : IRefreshTokenService
 
     public void RemoveRefreshTokenCookie(IResponseCookies cookies)
     {
-        cookies.Delete(_configuration["Keys:RefreshToken"]!, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict });
+        cookies.Append(_configuration["Keys:RefreshToken"]!, "", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(-1)
+        });
     }
 }

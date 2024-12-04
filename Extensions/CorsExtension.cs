@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-
-using MainPortfolio.Middleware;
-
-namespace MainPortfolio.Extensions;
+﻿namespace MainPortfolio.Extensions;
 
 public static class CorsExtension
 {
