@@ -1,4 +1,4 @@
-﻿using MainPortfolio.Security.Services.Interfaces;
+﻿using MainPortfolio.Security.Interfaces;
 
 namespace MainPortfolio.Middleware;
 
@@ -13,11 +13,11 @@ public class RefreshTokenMiddleware
     {
         var accessToken = context.Request.Headers["Authorization"].ToString().Replace(configuration["Keys:Bearer"]!, "");
 
-        if (string.IsNullOrWhiteSpace(accessToken) || !accessTokenService.ValidateAccessToken(accessToken))
+        if (string.IsNullOrWhiteSpace(accessToken) || !accessTokenService.ValidateToken(accessToken))
         {
             var refreshToken = context.Request.Cookies[configuration["Keys:RefreshToken"]!];
 
-            if (!string.IsNullOrEmpty(refreshToken) && refreshTokenService.ValidateRefreshToken(refreshToken))
+            if (!string.IsNullOrEmpty(refreshToken) && refreshTokenService.ValidateToken(refreshToken))
             {
                 var newAccessToken = await accessTokenService.GenerateNewAccessTokenAsync(refreshToken);
 

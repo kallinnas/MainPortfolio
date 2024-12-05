@@ -1,6 +1,6 @@
 ﻿using MainPortfolio.Models;
 
-namespace MainPortfolio.Security.Services.Interfaces;
+namespace MainPortfolio.Security.Interfaces;
 
 public interface IAuthService
 {

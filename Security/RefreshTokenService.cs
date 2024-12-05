@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Security.Interfaces;
 using MainPortfolio.Models;
 
-namespace MainPortfolio.Security.Services;
+namespace MainPortfolio.Security;
 
 public class RefreshTokenService : IRefreshTokenService
 {
@@ -14,7 +14,7 @@ public class RefreshTokenService : IRefreshTokenService
     public RefreshTokenService(IConfiguration configuration)
     { _configuration = configuration; _refreshKey = Encoding.ASCII.GetBytes(_configuration["Jwt:RefreshKey"]!); }
 
-    public string GenerateRefreshToken(User user)
+    public string GenerateToken(User user)
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
@@ -34,7 +34,7 @@ public class RefreshTokenService : IRefreshTokenService
         }
     }
 
-    public bool ValidateRefreshToken(string refreshToken)
+    public bool ValidateToken(string refreshToken)
     {
         var parts = refreshToken.Split('|');
         if (parts.Length != 4) return false;
@@ -52,13 +52,6 @@ public class RefreshTokenService : IRefreshTokenService
         }
     }
 
-    public string? GetUserEmailFromRefreshToken(string refreshToken)
-    {   // Split the token into its parts (random part, email, timestamp, signature)
-        var parts = refreshToken.Split('|');
-        if (parts.Length != 4) return null;
-        return parts[1];  // Extract the email part
-    }
-
     public void SetRefreshTokenCookie(string refreshToken, IResponseCookies cookies)
     {
         var cookieOptions = new CookieOptions
@@ -66,8 +59,7 @@ public class RefreshTokenService : IRefreshTokenService
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            //Expires = DateTime.UtcNow.AddMinutes(1)
-            Expires = DateTime.UtcNow.AddSeconds(10)
+            Expires = DateTime.UtcNow.AddMinutes(3)
         };
 
         cookies.Append(_configuration["Keys:RefreshToken"]!, refreshToken, cookieOptions);

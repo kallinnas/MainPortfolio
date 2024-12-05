@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Security.Interfaces;
 using MainPortfolio.Models;
 
-namespace MainPortfolio.Security.Controllers;
+namespace MainPortfolio.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

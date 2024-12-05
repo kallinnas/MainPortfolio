@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MainPortfolio.Data;
-using MainPortfolio.Models;
+
 using MainPortfolio.Repositories.Interfaces;
+using MainPortfolio.Models;
+using MainPortfolio.Data;
 
 namespace MainPortfolio.Repositories;
 

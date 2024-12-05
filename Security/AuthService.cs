@@ -1,8 +1,8 @@
-﻿using MainPortfolio.Security.Services.Interfaces;
-using MainPortfolio.Repositories.Interfaces;
+﻿using MainPortfolio.Repositories.Interfaces;
+using MainPortfolio.Security.Interfaces;
 using MainPortfolio.Models;
 
-namespace MainPortfolio.Security.Services;
+namespace MainPortfolio.Security;
 
 public class AuthService : IAuthService
 {
@@ -18,7 +18,8 @@ public class AuthService : IAuthService
 
         if (user != null && BCrypt.Net.BCrypt.Verify(userDto.Password, user.PasswordHash))
         {
-            return _refreshTokenService.GenerateRefreshToken(user);
+            //return _refreshTokenService.GenerateRefreshToken(user);
+            return _refreshTokenService.GenerateToken(user);
         }
 
         return "";
@@ -33,7 +34,8 @@ public class AuthService : IAuthService
         await _userRepository.AddUserAsync(newUser);
         await _userRepository.SaveChangesAsync();
 
-        return _refreshTokenService.GenerateRefreshToken(newUser);
+        //return _refreshTokenService.GenerateRefreshToken(newUser);
+        return _refreshTokenService.GenerateToken(newUser);
     }
 
 

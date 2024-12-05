@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Security.Interfaces;
 using MainPortfolio.Models;
 
-namespace MainPortfolio.Security.Controllers;
+namespace MainPortfolio.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -25,7 +25,7 @@ public class TokenController : ControllerBase
             return Ok(new { status = TokenStatus.NotFound });
         }
 
-        if (!_refreshTokenService.ValidateRefreshToken(refreshToken))
+        if (!_refreshTokenService.ValidateToken(refreshToken))
         {
             return Ok(new { status = TokenStatus.Invalid });
         }
