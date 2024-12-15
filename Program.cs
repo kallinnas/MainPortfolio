@@ -1,9 +1,9 @@
-using MainPortfolio.Extensions;
 using MainPortfolio.Repositories.Interfaces;
+using MainPortfolio.Security.Interfaces;
 using MainPortfolio.Repositories;
-using MainPortfolio.Security.Services;
-using MainPortfolio.Security.Services.Interfaces;
+using MainPortfolio.Extensions;
 using MainPortfolio.Middleware;
+using MainPortfolio.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +13,13 @@ builder.Configuration.AddEnvironmentVariables();
 // CORS
 builder.Services.AddAppCors(builder.Configuration);
 
-// JWT configuration
+// JWT Configuration
 builder.Services.AddJwtAuthentication(builder.Configuration);
 // Swagger with JWT
 builder.Services.AddSwaggerWithJwtAuth();
 
+// Mongo Db
+builder.Services.AddMongoDatabase(builder.Configuration);
 // MySQL Db
 builder.Services.AddMySqlDatabase(builder.Configuration);
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
@@ -29,6 +31,7 @@ builder.Services.AddSwaggerGen();
 // App services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<CvPdfRepository>();
 
 var app = builder.Build();
 

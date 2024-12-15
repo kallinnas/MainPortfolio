@@ -59,7 +59,7 @@ public class RefreshTokenService : IRefreshTokenService
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddMinutes(3)
+            Expires = DateTime.UtcNow.AddMinutes(60)
         };
 
         cookies.Append(_configuration["Keys:RefreshToken"]!, refreshToken, cookieOptions);

@@ -18,7 +18,6 @@ public class AuthService : IAuthService
 
         if (user != null && BCrypt.Net.BCrypt.Verify(userDto.Password, user.PasswordHash))
         {
-            //return _refreshTokenService.GenerateRefreshToken(user);
             return _refreshTokenService.GenerateToken(user);
         }
 
@@ -34,7 +33,6 @@ public class AuthService : IAuthService
         await _userRepository.AddUserAsync(newUser);
         await _userRepository.SaveChangesAsync();
 
-        //return _refreshTokenService.GenerateRefreshToken(newUser);
         return _refreshTokenService.GenerateToken(newUser);
     }
 
